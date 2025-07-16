@@ -1,168 +1,228 @@
-import React, { useState, useEffect } from "react";
-import { getTeams, addTeam, assignTeamToLeague } from "../api/footballApi";
+"use client"
+
+import { useState, useEffect } from "react"
+import { getTeams, addTeam, assignTeamToLeague } from "../api/footballApi"
+import { FaUsers, FaPlus, FaTrophy, FaSpinner, FaSync } from "react-icons/fa"
 
 export default function Teams() {
-  const [teams, setTeams] = useState([]);
-  const [teamForm, setTeamForm] = useState({ teamName: "", league: "" });
-  const [assignForm, setAssignForm] = useState({ teamName: "", leagueName: "" });
-  const [activeTab, setActiveTab] = useState("view");      // still used for refresh logic
-  const [loading, setLoading]   = useState(false);
-  const [message, setMessage]   = useState("");
+  const [teams, setTeams] = useState([])
+  const [teamForm, setTeamForm] = useState({ teamName: "", league: "" })
+  const [activeTab, setActiveTab] = useState("view")
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState("")
 
-  /* ─────────────────────────────────────────────────────────── */
-  /*   Fetch teams whenever we "refresh" the view section        */
-  /* ─────────────────────────────────────────────────────────── */
-  useEffect(() => {
-    setLoading(true);
+  const fetchTeams = () => {
+    setLoading(true)
+    setMessage("")
     getTeams()
       .then(setTeams)
       .catch(() => setMessage("Error fetching teams"))
-      .finally(() => setLoading(false));
-  }, [activeTab]);
+      .finally(() => setLoading(false))
+  }
 
-  /* ─────────────────────────────────────────────────────────── */
-  /*                    Form handlers                            */
-  /* ─────────────────────────────────────────────────────────── */
+  useEffect(() => {
+    fetchTeams()
+  }, [])
+
   const handleAddTeam = (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setLoading(true)
+    setMessage("")
     addTeam(teamForm)
+      .then(() => assignTeamToLeague(teamForm))
       .then(() => {
-        getTeams().then(setTeams);
-        setTeamForm({ teamName: "", league: "" });
-        setMessage("Team added successfully!");
+        fetchTeams()
+        setTeamForm({ teamName: "", league: "" })
+        setMessage("Team added and assigned successfully!")
+        setTimeout(() => setMessage(""), 3000)
       })
-      .catch(() => setMessage("Failed to add team"));
-  };
+      .catch(() => setMessage("Failed to add and assign team"))
+      .finally(() => setLoading(false))
+  }
 
-  const handleAssign = (e) => {
-    e.preventDefault();
-    assignTeamToLeague(assignForm)
-      .then(() => {
-        setAssignForm({ teamName: "", leagueName: "" });
-        setMessage("Team assigned successfully!");
-      })
-      .catch(() => setMessage("Failed to assign team"));
-  };
+  const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center py-12">
+      <FaSpinner className="animate-spin h-10 w-10 text-blue-500" />
+      <p className="mt-4 text-slate-400 text-sm">Loading teams...</p>
+    </div>
+  )
 
-  /* ─────────────────────────────────────────────────────────── */
-  /*                         JSX                                */
-  /* ─────────────────────────────────────────────────────────── */
   return (
-    <div className="bg-gray-900 min-h-screen pt-40 px-4 pb-20">
-        <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-32 px-4 pb-20">
+      <div className="max-w-6xl mx-auto">
+        {/* Enhanced Header */}
+        <div className="text-center mb-12">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-6">
+            <FaUsers className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 mb-4">
             Teams Dashboard
-        </h1>
+          </h1>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">Manage your football teams and league assignments</p>
+        </div>
 
+        {/* Message Alert */}
         {message && (
-            <div className="mb-6 p-4 bg-blue-800 border border-blue-600 rounded-lg text-center">
-            <p className="text-blue-300">{message}</p>
-            </div>
+          <div
+            className={`mb-6 p-4 rounded-lg border text-center ${
+              message.includes("successfully")
+                ? "border-green-500 bg-green-500/10 text-green-400"
+                : "border-red-500 bg-red-500/10 text-red-400"
+            }`}
+          >
+            {message}
+          </div>
         )}
 
-        <div className="space-y-12">
-            {/* VIEW TEAMS */}
-            <section className="bg-gray-800 rounded-xl shadow-lg p-6 overflow-y-auto max-h-[80vh]">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-100 flex items-center gap-2">
-                 Current Teams
-                </h2>
-                <button
-                onClick={() => {
-                    setActiveTab("view");
-                    setMessage("");
-                }}
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
-                >
-                Refresh
-                </button>
-            </div>
+        {/* Enhanced Tabs */}
+        <div className="max-w-md mx-auto mb-8">
+          <div className="grid grid-cols-2 bg-slate-800 border border-slate-700 rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab("view")}
+              className={`flex items-center justify-center gap-2 py-2 px-4 rounded transition-all ${
+                activeTab === "view" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <FaUsers className="h-4 w-4" />
+              View Teams
+            </button>
+            <button
+              onClick={() => setActiveTab("add")}
+              className={`flex items-center justify-center gap-2 py-2 px-4 rounded transition-all ${
+                activeTab === "add" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <FaPlus className="h-4 w-4" />
+              Add Team
+            </button>
+          </div>
+        </div>
 
-            {loading ? (
-                <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
-                <p className="mt-4 text-gray-300 text-sm">Loading teams...</p>
+        <div className="space-y-8">
+          {/* View Teams Tab */}
+          {activeTab === "view" && (
+            <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-sm rounded-xl">
+              <div className="p-6 border-b border-slate-700">
+                <div className="flex justify-between items-center">
+                  <h2 className="flex items-center gap-3 text-2xl text-blue-400 font-semibold">
+                    <FaUsers className="h-6 w-6" />
+                    Current Teams
+                  </h2>
+                  <button
+                    onClick={fetchTeams}
+                    disabled={loading}
+                    className="border border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent px-4 py-2 rounded text-sm transition-colors flex items-center gap-2"
+                  >
+                    <FaSync className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                    Refresh
+                  </button>
                 </div>
-            ) : teams.length ? (
-                <ul className="divide-y divide-gray-700">
-                {teams.map((t) => (
-                    <li
-                    key={t.id}
-                    className="py-2 flex justify-between text-gray-200"
-                    >
-                    <span className="font-medium">{t.teamName}</span>
-                    <span className="text-gray-400">{t.league}</span>
-                    </li>
-                ))}
-                </ul>
-            ) : (
-                <p className="text-center text-gray-500 py-4 text-sm">
-                No teams found
-                </p>
-            )}
-            </section>
+              </div>
+              <div className="p-6">
+                {loading ? (
+                  <LoadingSpinner />
+                ) : teams.length ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {teams.map((team) => (
+                      <div
+                        key={team.id}
+                        className="bg-slate-700/30 border border-slate-600 hover:border-blue-500 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/10 rounded-xl"
+                      >
+                        <div className="p-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                              <FaUsers className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-white text-lg">{team.teamName}</h3>
+                              <p className="text-sm text-slate-400">Team ID: {team.id}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <FaTrophy className="h-4 w-4 text-yellow-500" />
+                            <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded text-sm">{team.league}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <FaUsers className="h-16 w-16 text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-400 text-lg">No teams found</p>
+                    <p className="text-slate-500 text-sm mt-2">Add your first team to get started</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-            {/* ADD TEAM */}
-            <section className="bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
-            <h2 className="text-2xl font-semibold text-blue-400 flex items-center gap-2">
-                ➕ Add a New Team
-            </h2>
-            <form onSubmit={handleAddTeam} className="space-y-4">
-                <input
-                className="bg-gray-700 border border-gray-600 text-gray-200 p-3 rounded w-full placeholder-gray-400"
-                placeholder="Team Name"
-                value={teamForm.teamName}
-                onChange={(e) =>
-                    setTeamForm((f) => ({ ...f, teamName: e.target.value }))
-                }
-                required
-                />
-                <input
-                className="bg-gray-700 border border-gray-600 text-gray-200 p-3 rounded w-full placeholder-gray-400"
-                placeholder="League Name"
-                value={teamForm.league}
-                onChange={(e) =>
-                    setTeamForm((f) => ({ ...f, league: e.target.value }))
-                }
-                required
-                />
-                <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-                Add Team
-                </button>
-            </form>
-            </section>
+          {/* Add Team Tab */}
+          {activeTab === "add" && (
+            <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-sm max-w-2xl mx-auto rounded-xl">
+              <div className="p-6 border-b border-slate-700">
+                <h2 className="flex items-center gap-3 text-2xl text-green-400 font-semibold">
+                  <FaPlus className="h-6 w-6" />
+                  Add New Team
+                </h2>
+                <p className="text-slate-400 mt-2">Create a new team and assign it to a league</p>
+              </div>
+              <div className="p-6">
+                <form onSubmit={handleAddTeam} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="team-name" className="text-slate-300 flex items-center gap-2 font-medium">
+                        <FaUsers className="h-4 w-4" />
+                        Team Name
+                      </label>
+                      <input
+                        id="team-name"
+                        placeholder="Enter team name"
+                        value={teamForm.teamName}
+                        onChange={(e) => setTeamForm((f) => ({ ...f, teamName: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 focus:outline-none p-3 rounded-lg transition-colors"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="league-name" className="text-slate-300 flex items-center gap-2 font-medium">
+                        <FaTrophy className="h-4 w-4" />
+                        League Name
+                      </label>
+                      <input
+                        id="league-name"
+                        placeholder="Enter league name"
+                        value={teamForm.league}
+                        onChange={(e) => setTeamForm((f) => ({ ...f, league: e.target.value }))}
+                        className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 focus:outline-none p-3 rounded-lg transition-colors"
+                        required
+                      />
+                    </div>
+                  </div>
 
-            {/* ASSIGN TEAM */}
-            <section className="bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
-            <h2 className="text-2xl font-semibold text-green-400 flex items-center gap-2">
-                 Assign Team to League's Leaderboard
-            </h2>
-            <form onSubmit={handleAssign} className="space-y-4">
-                <input
-                className="bg-gray-700 border border-gray-600 text-gray-200 p-3 rounded w-full placeholder-gray-400"
-                placeholder="Team Name"
-                value={assignForm.teamName}
-                onChange={(e) =>
-                    setAssignForm((f) => ({ ...f, teamName: e.target.value }))
-                }
-                required
-                />
-                <input
-                className="bg-gray-700 border border-gray-600 text-gray-200 p-3 rounded w-full placeholder-gray-400"
-                placeholder="League Name"
-                value={assignForm.leagueName}
-                onChange={(e) =>
-                    setAssignForm((f) => ({ ...f, leagueName: e.target.value }))
-                }
-                required
-                />
-                <button className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
-                Assign
-                </button>
-            </form>
-            </section>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <FaSpinner className="animate-spin h-5 w-5" />
+                        Adding Team...
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2">
+                        <FaPlus className="h-5 w-5" />
+                        Add Team to League
+                      </div>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-        </div>
+      </div>
     </div>
-    );
+  )
 }

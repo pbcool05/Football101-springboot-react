@@ -26,3 +26,6 @@ export const addMatch = (match) =>
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(match),
   });
+
+export const getPlayersFromTeam = (teamName) =>
+  fetch(`${API}/players/team?team=${encodeURIComponent(teamName)}`).then(res => res.json());

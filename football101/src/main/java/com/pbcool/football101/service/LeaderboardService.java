@@ -61,7 +61,7 @@ public class LeaderboardService {
     //method to assign teams
     public ResponseEntity<String> assignTeamToLeague(LeaderBoardDataRequest request) {
         Optional<Team> team = teamDao.findByTeamName(request.getTeamName());
-        Optional<League> league = leagueDao.findByLeagueName(request.getLeagueName());
+        Optional<League> league = leagueDao.findByLeagueName(request.getLeague());
 
         if (team.isEmpty() || league.isEmpty()) {
             return new ResponseEntity<>("team or league not found", HttpStatus.NOT_FOUND);

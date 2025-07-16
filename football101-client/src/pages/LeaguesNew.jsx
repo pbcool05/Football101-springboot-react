@@ -1,120 +1,197 @@
-// src/pages/LeaguesDashboard.jsx
-import React, { useState, useEffect } from "react";
-import { getLeagues, getLeaderboard } from "../api/footballApi";
+"use client"
+
+import { useState, useEffect } from "react"
+import { getLeagues, getLeaderboard } from "../api/footballApi"
+import { Link } from "react-router-dom"
+import { FaTrophy, FaUsers, FaBullseye, FaAward, FaSpinner } from "react-icons/fa"
 
 export default function LeaguesDashboard() {
-  // Leagues state
-  const [leagues, setLeagues] = useState([]);
-  const [leaguesLoading, setLeaguesLoading] = useState(false);
-  const [leaguesMessage, setLeaguesMessage] = useState("");
+  const [leagues, setLeagues] = useState([])
+  const [leaguesLoading, setLeaguesLoading] = useState(false)
+  const [leaguesMessage, setLeaguesMessage] = useState("")
 
-  // Leaderboard state
-  const [selectedLeague, setSelectedLeague] = useState("");
-  const [table, setTable] = useState([]);
-  const [tableLoading, setTableLoading] = useState(false);
-  const [tableMessage, setTableMessage] = useState("");
+  const [selectedLeague, setSelectedLeague] = useState("")
+  const [table, setTable] = useState([])
+  const [tableLoading, setTableLoading] = useState(false)
+  const [tableMessage, setTableMessage] = useState("")
 
-  // Fetch leagues on mount
   useEffect(() => {
-    setLeaguesLoading(true);
+    setLeaguesLoading(true)
     getLeagues()
       .then((data) => {
-        setLeagues(data);
-        if (!data.length) setLeaguesMessage("No leagues found.");
+        setLeagues(data)
+        if (!data.length) setLeaguesMessage("No leagues found.")
       })
       .catch(() => setLeaguesMessage("Failed to fetch leagues."))
-      .finally(() => setLeaguesLoading(false));
-  }, []);
+      .finally(() => setLeaguesLoading(false))
+  }, [])
 
-  // Fetch leaderboard when a league is selected
   const fetchTable = (leagueName) => {
-    setSelectedLeague(leagueName);
-    setTable([]);
-    setTableMessage("");
-    setTableLoading(true);
+    setSelectedLeague(leagueName)
+    setTable([])
+    setTableMessage("")
+    setTableLoading(true)
     getLeaderboard(leagueName)
       .then((data) => {
-        setTable(data);
-        if (!data.length) setTableMessage("No leaderboard data found.");
+        setTable(data)
+        if (!data.length) setTableMessage("No leaderboard data found.")
       })
       .catch(() => setTableMessage("Failed to fetch leaderboard."))
-      .finally(() => setTableLoading(false));
-  };
+      .finally(() => setTableLoading(false))
+  }
+
+  const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center py-12">
+      <FaSpinner className="animate-spin h-12 w-12 text-blue-500" />
+      <p className="mt-4 text-slate-400 text-sm">Loading...</p>
+    </div>
+  )
+
+  const getPositionColor = (index) => {
+    if (index === 0) return "text-yellow-500"
+    if (index === 1) return "text-gray-400"
+    if (index === 2) return "text-amber-600"
+    return "text-slate-400"
+  }
+
+  const getPositionIcon = (index) => {
+    if (index < 3) return <FaAward className="h-4 w-4" />
+    return <span className="text-sm font-semibold">{index + 1}</span>
+  }
 
   return (
-    <div className="bg-gray-900 min-h-screen pt-40 px-4 pb-20">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center">Leagues Dashboard</h1>
-        {/* Leagues List */}
-        <section className="bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-blue-400 mb-4">Leagues</h2>
-          {leaguesLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
-              <p className="mt-4 text-gray-300 text-sm">Loading leagues...</p>
-            </div>
-          ) : leagues.length ? (
-            <ul className="divide-y divide-gray-700">
-              {leagues.map((l) => (
-                <li
-                  key={l.id}
-                  className="py-2 flex justify-between text-gray-200 cursor-pointer hover:bg-gray-700 rounded transition"
-                  onClick={() => fetchTable(l.leagueName)}
-                >
-                  <span className="font-medium">{l.leagueName}</span>
-                  <span className="text-gray-400">ID: {l.id}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-center text-gray-500 py-4 text-sm">{leaguesMessage || "No leagues found."}</p>
-          )}
-        </section>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-32 px-4 pb-20">
+      <div className="max-w-7xl mx-auto">
+        {/* Enhanced Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 mb-4">
+            Leagues Dashboard
+          </h1>
+          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+            Explore leagues and track team performance across competitions
+          </p>
+        </div>
 
-        {/* Leaderboard Table */}
-        <section className="bg-gray-800 rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-green-400 mb-4">
-            {selectedLeague ? `Leaderboard: ${selectedLeague}` : "Leaderboard"}
-          </h2>
-          {tableLoading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-400 mx-auto"></div>
-              <p className="mt-4 text-gray-300 text-sm">Loading leaderboard...</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Enhanced Leagues List */}
+          <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-sm rounded-xl shadow-xl">
+            <div className="p-6 border-b border-slate-700">
+              <h2 className="flex items-center gap-3 text-2xl text-blue-400 font-semibold">
+                <FaTrophy className="h-6 w-6" />
+                Available Leagues
+              </h2>
             </div>
-          ) : table.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-gray-200">
-                <thead>
-                  <tr>
-                    <th className="p-2 border-b border-gray-700">Team</th>
-                    <th className="p-2 border-b border-gray-700">MP</th>
-                    <th className="p-2 border-b border-gray-700">W</th>
-                    <th className="p-2 border-b border-gray-700">D</th>
-                    <th className="p-2 border-b border-gray-700">L</th>
-                    <th className="p-2 border-b border-gray-700">Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {table.map((row, i) => (
-                    <tr key={i} className="hover:bg-gray-700 transition">
-                      <td className="p-2 border-b border-gray-700">{row.teamName}</td>
-                      <td className="p-2 border-b border-gray-700">{row.matchesPlayed}</td>
-                      <td className="p-2 border-b border-gray-700">{row.won}</td>
-                      <td className="p-2 border-b border-gray-700">{row.drawn}</td>
-                      <td className="p-2 border-b border-gray-700">{row.lost}</td>
-                      <td className="p-2 border-b border-gray-700">{row.points}</td>
-                    </tr>
+            <div className="p-6">
+              {leaguesLoading ? (
+                <LoadingSpinner />
+              ) : leagues.length ? (
+                <div className="space-y-3">
+                  {leagues.map((l) => (
+                    <div
+                      key={l.id}
+                      onClick={() => fetchTable(l.leagueName)}
+                      className="group cursor-pointer p-4 rounded-lg border border-slate-600 hover:border-blue-500 bg-slate-700/30 hover:bg-slate-700/60 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/10"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                            <FaTrophy className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                              {l.leagueName}
+                            </h3>
+                            <p className="text-sm text-slate-400">Click to view standings</p>
+                          </div>
+                        </div>
+                        <span className="bg-slate-600 text-slate-300 px-2 py-1 rounded text-sm">ID: {l.id}</span>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FaTrophy className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-400">{leaguesMessage}</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <p className="text-center text-gray-500 py-4 text-sm">
-              {selectedLeague ? tableMessage || "No leaderboard data." : "Select a league to view leaderboard."}
-            </p>
-          )}
-        </section>
+          </div>
+
+          {/* Enhanced Leaderboard Table */}
+          <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-sm rounded-xl shadow-xl">
+            <div className="p-6 border-b border-slate-700">
+              <h2 className="flex items-center gap-3 text-2xl text-green-400 font-semibold">
+                <FaBullseye className="h-6 w-6" />
+                {selectedLeague ? `${selectedLeague} Standings` : "League Standings"}
+              </h2>
+            </div>
+            <div className="p-6">
+              {tableLoading ? (
+                <LoadingSpinner />
+              ) : table.length > 0 ? (
+                <div className="overflow-hidden rounded-lg border border-slate-600">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-slate-700/50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Pos</th>
+                          <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">Team</th>
+                          <th className="px-4 py-3 text-center text-sm font-semibold text-slate-300">MP</th>
+                          <th className="px-4 py-3 text-center text-sm font-semibold text-slate-300">W</th>
+                          <th className="px-4 py-3 text-center text-sm font-semibold text-slate-300">D</th>
+                          <th className="px-4 py-3 text-center text-sm font-semibold text-slate-300">L</th>
+                          <th className="px-4 py-3 text-center text-sm font-semibold text-slate-300">Pts</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-600">
+                        {table.map((row, i) => (
+                          <tr key={i} className="hover:bg-slate-700/30 transition-colors group">
+                            <td className="px-4 py-3">
+                              <div
+                                className={`flex items-center justify-center w-8 h-8 rounded-full ${getPositionColor(i)}`}
+                              >
+                                {getPositionIcon(i)}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <Link
+                                to={`/team/${encodeURIComponent(row.teamName)}`}
+                                className="flex items-center gap-3 text-blue-400 hover:text-blue-300 transition-colors group-hover:underline"
+                              >
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                  <FaUsers className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="font-medium">{row.teamName}</span>
+                              </Link>
+                            </td>
+                            <td className="px-4 py-3 text-center text-slate-300">{row.matchesPlayed}</td>
+                            <td className="px-4 py-3 text-center text-green-400 font-semibold">{row.won}</td>
+                            <td className="px-4 py-3 text-center text-yellow-400 font-semibold">{row.drawn}</td>
+                            <td className="px-4 py-3 text-center text-red-400 font-semibold">{row.lost}</td>
+                            <td className="px-4 py-3 text-center">
+                              <span className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded">
+                                {row.points}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FaBullseye className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-400">
+                    {selectedLeague ? tableMessage || "No leaderboard data." : "Select a league to view standings."}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }
