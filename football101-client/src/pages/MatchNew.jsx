@@ -41,17 +41,17 @@ export default function Match() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-32 px-4 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black pt-32 px-4 pb-20">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-slate-800/50 border border-slate-700 backdrop-blur-sm shadow-2xl rounded-xl">
+        <div className="bg-gray-900/50 border border-gray-700 backdrop-blur-sm shadow-2xl rounded-xl">
           <div className="text-center pb-6 p-8">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-gray-700 to-black border border-gray-600 flex items-center justify-center mx-auto mb-4">
               <FaBullseye className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
               Add Match
             </h1>
-            <p className="text-slate-400 mt-2">Record a new match result</p>
+            <p className="text-gray-400 mt-2">Record a new match result</p>
           </div>
 
           <div className="px-8 pb-8 space-y-6">
@@ -75,7 +75,7 @@ export default function Match() {
               {/* League and Date Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="league" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="league" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaTrophy className="h-4 w-4" />
                     League Name
                   </label>
@@ -84,12 +84,12 @@ export default function Match() {
                     placeholder="Enter league name"
                     value={form.leagueName}
                     onChange={(e) => handleInputChange("leagueName", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-blue-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 focus:border-gray-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="date" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="date" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaCalendarAlt className="h-4 w-4" />
                     Match Date
                   </label>
@@ -98,7 +98,7 @@ export default function Match() {
                     type="date"
                     value={form.matchDate}
                     onChange={(e) => handleInputChange("matchDate", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white focus:border-blue-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white focus:border-gray-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
@@ -107,7 +107,7 @@ export default function Match() {
               {/* Teams Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="home-team" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="home-team" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaUsers className="h-4 w-4" />
                     Home Team
                   </label>
@@ -116,12 +116,12 @@ export default function Match() {
                     placeholder="Enter home team name"
                     value={form.homeTeamName}
                     onChange={(e) => handleInputChange("homeTeamName", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-purple-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 focus:border-gray-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="away-team" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="away-team" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaUsers className="h-4 w-4" />
                     Away Team
                   </label>
@@ -130,7 +130,7 @@ export default function Match() {
                     placeholder="Enter away team name"
                     value={form.awayTeamName}
                     onChange={(e) => handleInputChange("awayTeamName", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-purple-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 focus:border-gray-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
@@ -139,7 +139,7 @@ export default function Match() {
               {/* Score and Winner Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="score" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="score" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaBullseye className="h-4 w-4" />
                     Final Score
                   </label>
@@ -148,12 +148,12 @@ export default function Match() {
                     placeholder="e.g., 2 - 1"
                     value={form.score}
                     onChange={(e) => handleInputChange("score", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-green-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 focus:border-green-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="winner" className="text-slate-300 flex items-center gap-2 font-medium">
+                  <label htmlFor="winner" className="text-gray-300 flex items-center gap-2 font-medium">
                     <FaTrophy className="h-4 w-4" />
                     Winner
                   </label>
@@ -162,7 +162,7 @@ export default function Match() {
                     placeholder="Enter winning team name"
                     value={form.winner}
                     onChange={(e) => handleInputChange("winner", e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 text-white placeholder:text-slate-400 focus:border-green-500 focus:outline-none p-4 rounded-lg transition-colors"
+                    className="w-full bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 focus:border-green-500 focus:outline-none p-4 rounded-lg transition-colors"
                     required
                   />
                 </div>
@@ -171,7 +171,7 @@ export default function Match() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-purple-600 hover:to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-6 bg-gradient-to-r from-gray-800 to-black border border-gray-600 hover:from-gray-700 hover:to-gray-900 text-white font-bold text-lg rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">
