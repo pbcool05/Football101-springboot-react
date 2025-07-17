@@ -46,10 +46,10 @@ export default function PlayerCard({ player }) {
   const getPositionColor = (position) => {
     const colors = {
       GK: "bg-yellow-500",
-      DEF: "bg-blue-500",
-      MID: "bg-green-500",
-      FWD: "bg-red-500",
-      ATT: "bg-red-500",
+      DF: "bg-blue-500",
+      MF: "bg-green-500",
+      FW: "bg-red-500",
+      
     }
     return colors[position?.toUpperCase()] || "bg-gray-500"
   }
@@ -103,9 +103,9 @@ export default function PlayerCard({ player }) {
                   <div>
                     <h2 className="text-2xl font-bold text-white">{player.name}</h2>
                     <span
-                      className={`${getPositionColor(player.position)} text-white font-semibold mt-1 px-2 py-1 rounded text-sm`}
+                      className={`${getPositionColor(player.positions)} text-white font-semibold mt-1 px-2 py-1 rounded text-sm`}
                     >
-                      {player.position}
+                      {player.positions}
                     </span>
                   </div>
                 </div>
@@ -114,7 +114,7 @@ export default function PlayerCard({ player }) {
               {/* Stats content */}
               <div className="p-6 space-y-3">
                 <StatItem icon={FaUser} label="Age" value={`${player.age} years`} />
-                <StatItem icon={FaUsers} label="Matches Played" value={player.mp} color="text-gray-400" />
+                <StatItem icon={FaUsers} label="Matches Played" value={player.matchesPlayed} color="text-gray-400" />
                 <StatItem icon={FaBullseye} label="Goals" value={player.goals} color="text-green-400" />
                 <StatItem icon={FaTrophy} label="Assists" value={player.assists} color="text-yellow-400" />
               </div>
@@ -139,7 +139,7 @@ export default function PlayerCard({ player }) {
                   <h3 className="text-lg font-semibold text-white group-hover:text-gray-300 transition-colors">
                     {player.name}
                   </h3>
-                  <span className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded">{player.position}</span>
+                  <span className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded">{player.positions}</span>
                 </div>
               </div>
               <button className="bg-gray-700 hover:bg-gray-600 text-white shadow-md px-3 py-1 rounded text-sm transition-colors">
