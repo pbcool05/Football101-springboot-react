@@ -103,5 +103,6 @@ cd Football101
 
 ---
 
-## 🙋‍♂️ Author
-- Pranav Bansal 
+## Connect with me
+
+[LinkedIn – Pranav Bansal](https://www.linkedin.com/in/pranav-bansal-12138a2b5/)
